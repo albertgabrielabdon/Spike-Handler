@@ -24,7 +24,8 @@ class SpikeHandlerView(View):
         related_website = request.POST.get("related_website", "smcinema.com")
         ojt_name = request.POST.get("ojt_name", "OJT Name")
 
-        ip_list = [ip.strip() for ip in ip_input.split(",") if ip.strip()]
+        ayen_request_1_input = = ip_input.replace(" ", ",").replace(",,", ",")
+        ip_list = [ip.strip() for ip in ayen_request_1_input.split(",") if ip.strip()]
 
         results = []
         non_malicious = []
