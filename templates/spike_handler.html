@@ -1,0 +1,141 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Spike Handler</title>
+<style>
+    body { 
+        font-family: Arial, sans-serif; 
+        background: #f9f9f9; 
+        padding: 20px; 
+    }
+    h1 { 
+        color: #d17538; 
+    }
+    input, textarea, button { 
+        padding: 10px; 
+        margin: 10px 0; 
+        width: 100%; 
+        font-size: 16px; 
+    }
+    button { 
+        background-color: #d17538; 
+        color: white; 
+        border: none; 
+        cursor: pointer; 
+    }
+    button:hover { 
+        background-color: #d13838; 
+        color: black; 
+    }
+    table { 
+        width: 100%; 
+        border-collapse: collapse; 
+        margin-top: 20px; 
+    }
+    th, td { 
+        border: 1px solid #ddd; 
+        padding: 8px; 
+        text-align: left; 
+    }
+    th { 
+        background-color: #d17538; 
+    }
+    pre { 
+        background: #eee; 
+        padding: 10px; 
+        }
+</style>
+</head>
+<body>
+<h1>Analyze Your Event Notifications</h1>
+
+<form method="post">
+    {% csrf_token %}
+    <label>Enter IP addresses:</label>
+    <input type="text" name="ip_addresses" value="{{ ip_input }}">
+
+    <label>Ticket Number:</label>
+    <input type="text" name="ticket_no" value="{{ ticket_no|default:'Ticket No.' }}">
+
+    <label>Related Website:</label>
+    <input type="text" name="related_website" value="{{ related_website|default:'example.com' }}">
+
+    <label>OJT Name:</label>
+    <input type="text" name="ojt_name" value="{{ ojt_name|default:'OJT Name' }}">
+
+    <button type="submit">Check</button>
+</form>
+
+
+{% if ticket_resolution %}
+<h2>Ticket Resolution</h2>
+<pre>{{ ticket_resolution }}</pre>
+{% endif %}
+
+{% if output %}
+<h2>AbuseIPDB Results</h2>
+<table>
+    <tr>
+        <th>IP Address</th>
+        <th>Confidence Score</th>
+        <th>Reports (4 Months)</th>
+        <th>ISP</th>
+        <th>Country</th>
+    </tr>
+    {% for row in output %}
+    <tr>
+        <td>{{ row.IP_Address }}</td>
+        <td>{{ row.Confidence_Score }}</td>
+        <td>{{ row.Reports }}</td>
+        <td>{{ row.ISP }}</td>
+        <td>{{ row.Country }}</td>
+    </tr>
+    {% endfor %}
+</table>
+{% endif %}
+
+{% if incident_log %}
+<h2>Blacklist Incident Log</h2>
+<table>
+    <tr>
+        <th>IP</th>
+        <th>Date</th>
+        <th>Source</th>
+        <th>Ticket No.</th>
+        <th>Event</th>
+        <th>Details</th>
+        <th>Resolver</th>
+    </tr>
+    {% for log in incident_log %}
+    <tr>
+        <td>{{ log.IP }}</td>
+        <td>{{ log.Date }}</td>
+        <td>{{ log.Source }}</td>
+        <td>{{ log.Ticket_No }}</td>
+        <td>{{ log.Event }}</td>
+        <td>{{ log.Details }}</td>
+        <td>{{ log.Resolver }}</td>
+    </tr>
+    {% endfor %}
+</table>
+{% endif %}
+
+<h2>Resolution Table:</h2>
+<table border="1" cellpadding="5">
+    {% for row in df_resolution %}
+    <tr>
+        {% if forloop.first %}
+            <th colspan="2"><center>{{ row.Column_A }}</center></th>
+        {% else %}
+            <td>{{ row.Column_A }}</td>
+            <td>{{ row.Column_B }}</td>
+        {% endif %}
+    </tr>
+    {% endfor %}
+</table>
+
+
+</body>
+</html>
