@@ -101,6 +101,8 @@ class SpikeHandlerView(View):
 
 
         today = datetime.now().strftime("%m/%d/%Y")
+
+        ip_links = "\n".join([f"https://www.abuseipdb.com/check/{ip}" for ip in ip_list])
         sheets_data = {
             "Column A": [
                 "CloudFlare Alert Detection",
@@ -133,7 +135,7 @@ class SpikeHandlerView(View):
                 "None",
                 "N/A",
                 "No further recommendations",
-                "CF Detection:",
+                f"CF Detection:\nIP Reputation: \n{ip_links}",
                 "Spike detected, all requests blocked by WAF. No pending actions.",
                 today + " - No pending actions. Ticket closure.",
                 "Spike detected, all requests blocked by WAF. No pending actions."
