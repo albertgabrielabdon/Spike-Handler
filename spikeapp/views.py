@@ -56,7 +56,10 @@ class SpikeHandlerView(View):
                     "Country": country
                 })
                 if isp == "Zscaler, Inc.":
-                    zscaler_non_malicious.append(f"{ip} is NON MALICIOUS due to its reliable ISP: Zscaler, Inc.")
+                    zscaler_non_malicious.append({
+                        "ip": ip,
+                        "status": f"{ip} is NON MALICIOUS due to its reliable ISP: Zscaler, Inc."
+                    })
                     non_malicious.append(ip)
                 elif confidence == 0 and reports == 0:
                     non_malicious.append(ip)
@@ -75,8 +78,15 @@ class SpikeHandlerView(View):
                 })
 
         ticket_resolution = ""
-        if non_malicious:
-            ticket_resolution += "NON-MALICIOUS: " + ",".join(non_malicious) + "\n"
+
+        if zscaler_non_malicious:
+            zscaler_ips_only = [item["ip"] for item in zscaler_non_malicious]
+            ticket_resolution += "ZSCALER NON-MALICIOUS: " + ",".join(zscaler_ips_only) + "\n"
+
+        regular_non_malicious = [ip for ip in non_malicious if ip not in [item["ip"] for item in zscaler_non_malicious]]
+
+        if regular_non_malicious:
+            ticket_resolution += "NON-MALICIOUS: " + ",".join(regular_non_malicious) + "\n"
         if malicious:
             ticket_resolution += "MALICIOUS: " + ",".join(malicious) + "\n"
         if for_review:
@@ -148,13 +158,6 @@ class SpikeHandlerView(View):
         df_resolution = pd.DataFrame(sheets_data)
         df_resolution.rename(columns={"Column A": "Column_A", "Column B": "Column_B"}, inplace=True)
 
-        if zscaler_non_malicious:
-            context = {
-                "zscaler_ips": zscaler_non_malicious,
-                "ojt_name": ojt_name
-            }
-            return render(request, self.success_template, context)
-
         context = {
             "ip_input": ip_input,
             "related_website": related_website,
@@ -163,7 +166,8 @@ class SpikeHandlerView(View):
             "output": pd.DataFrame(results).to_dict(orient="records"),
             "ticket_resolution": ticket_resolution.strip(),
             "incident_log": incident_logs,
-            "df_resolution": df_resolution.to_dict(orient="records")
+            "df_resolution": df_resolution.to_dict(orient="records"),
+            "zscaler_ips": zscaler_non_malicious
         }
 
         return render(request, self.template_name, context)
