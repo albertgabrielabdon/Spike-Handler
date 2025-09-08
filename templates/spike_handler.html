@@ -144,27 +144,18 @@
 
 
 {% if zscaler_ips %}
-<h2 style="color:green; text-align:center;">SUCCESSFUL NON PH LOGIN</h2>
 <table>
     <tr>
-        <th>IP Address</th>
-        <th>Status</th>
+        <th>Successful NON PH Login</th>
     </tr>
-    {% for ip in zscaler_ips %}
+    {% for item in zscaler_ips %}
     <tr>
-        <td>{{ ip.split(" ")[0] }}</td>
-        <td>{{ ip }}</td>
+        <td>{{ item.status }}<br>- {{ ojt_name }}</td>
     </tr>
     {% endfor %}
 </table>
-
-<div class="footer-note">
-    {% for ip in zscaler_ips %}
-        {{ ip }}<br>
-    {% endfor %}
-    - {{ ojt_name }}
-</div>
 {% endif %}
+
 
 
 
