@@ -31,6 +31,7 @@ class SpikeHandlerView(View):
         non_malicious = []
         malicious = []
         for_review = []
+        zscaler_non_malicious = []
         today = datetime.now().strftime("%m/%d/%Y")
 
         for ip in ip_list:
@@ -54,8 +55,10 @@ class SpikeHandlerView(View):
                     "ISP": isp,
                     "Country": country
                 })
-
-                if confidence == 0 and reports == 0:
+                if isp == "Zscaler, Inc.":
+                    zscaler_non_malicious.append(f"{ip} is NON MALICIOUS due to its reliable ISP: Zscaler, Inc.")
+                    non_malicious.append(ip)
+                elif confidence == 0 and reports == 0:
                     non_malicious.append(ip)
                 elif confidence > 0:
                     malicious.append(ip)
@@ -145,6 +148,12 @@ class SpikeHandlerView(View):
         df_resolution = pd.DataFrame(sheets_data)
         df_resolution.rename(columns={"Column A": "Column_A", "Column B": "Column_B"}, inplace=True)
 
+        if zscaler_non_malicious:
+            context = {
+                "zscaler_ips": zscaler_non_malicious,
+                "ojt_name": ojt_name
+            }
+            return render(request, self.success_template, context)
 
         context = {
             "ip_input": ip_input,
