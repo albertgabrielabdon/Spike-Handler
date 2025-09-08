@@ -46,6 +46,12 @@
         background: #eee; 
         padding: 10px; 
         }
+    .footer-note {
+        margin-top: 30px;
+        font-size: 16px;
+        font-weight: bold;
+        text-align: center;
+    }
 </style>
 </head>
 <body>
@@ -135,6 +141,31 @@
     </tr>
     {% endfor %}
 </table>
+
+
+{% if zscaler_ips %}
+<h2 style="color:green; text-align:center;">SUCCESSFUL NON PH LOGIN</h2>
+<table>
+    <tr>
+        <th>IP Address</th>
+        <th>Status</th>
+    </tr>
+    {% for ip in zscaler_ips %}
+    <tr>
+        <td>{{ ip.split(" ")[0] }}</td>
+        <td>{{ ip }}</td>
+    </tr>
+    {% endfor %}
+</table>
+
+<div class="footer-note">
+    {% for ip in zscaler_ips %}
+        {{ ip }}<br>
+    {% endfor %}
+    - {{ ojt_name }}
+</div>
+{% endif %}
+
 
 
 </body>
