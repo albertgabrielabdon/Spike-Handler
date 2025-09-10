@@ -142,6 +142,21 @@
     {% endfor %}
 </table>
 
+<h2>XSS Resolutions:</h2>
+{% for df_xss in df_xss_resolutions %}
+  <table>
+    {% for row in df_xss %}
+    <tr>
+        {% if forloop.first %}
+            <th colspan="2"><center>{{ row.Column_A }}</center></th>
+        {% else %}
+            <td>{{ row.Column_A }}</td>
+            <td>{{ row.Column_B }}</td>
+        {% endif %}
+    </tr>
+    {% endfor %}
+  </table>
+{% endfor %}
 
 {% if zscaler_ips %}
 <table>
